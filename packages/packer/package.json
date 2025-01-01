@@ -1,0 +1,26 @@
+{
+  "name": "vscode-packer",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "main": "index.js",
+  "keywords": [],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "esbuild": "^0.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.3",
+    "htmlparser2": "^10.0.0",
+    "node-html-parser": "^7.0.1",
+    "vite": "^6.0.6"
+  },
+  "optionalDependencies": {
+    "sass": "^1.83.0",
+    "sass-embedded": "^1.83.0"
+  }
+}

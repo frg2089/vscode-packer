@@ -1,0 +1,18 @@
+{
+  "extends": "@tomjs/tsconfig/web.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src/webview",
+    "baseUrl": "./src/webview",
+    "tsBuildInfoFile": "obj/tsconfig.webview.tsbuildinfo",
+    "paths": {
+      "@w/*": ["./*"]
+    },
+    "types": ["@types/vscode-webview"]
+  },
+  "include": [
+    "src/webview/**/*.ts",
+    "src/webview/**/*.d.ts",
+    "obj/*.d.ts"
+  ]
+}

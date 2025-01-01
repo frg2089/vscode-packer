@@ -1,0 +1,21 @@
+{
+  "extends": "@tomjs/tsconfig/node.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "tsBuildInfoFile": "obj/tsconfig.webview.tsbuildinfo",
+    "paths": {
+      "@e/*": ["./*"]
+    },
+    "types": ["node"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "obj/*.d.ts"
+  ],
+  "exclude": [
+    "./src/webview"
+  ]
+}
