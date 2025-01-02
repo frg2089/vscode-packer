@@ -1,15 +1,26 @@
 import * as htmlParser from 'node-html-parser'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+import * as tsup from 'tsup'
+
+type ESBuildPlugin = Exclude<tsup.Options['esbuildPlugins'], undefined>[0]
 
 /**
  * Webview 文件处理器
  */
 class Processor {
-  /** 源代码文件夹 */
+  /** 项目源代码文件夹 */
+  readonly baseDir: string
+  /** Webview 代码文件夹名称 */
+  readonly webviewDirName: string
+  /**
+   *  Webview 代码文件夹
+   * @default path.resolve(this.baseDir, this.webviewDirName)
+   */
   readonly srcDir: string
-  /** 产物文件夹 */
+  /** Webview 产物文件夹 */
   readonly distDir: string
+  
   readonly selectors: string[] = ['link[rel="stylesheet"]', 'script[src]']
   /** 文件处理器 */
   readonly plugins: Processor.ProcessorPlugin[] = []
@@ -21,8 +32,10 @@ class Processor {
   > = {}
 
   constructor(config: Processor.ProcessConfig) {
-    this.srcDir = path.resolve(config.srcDir)
-    this.distDir = path.resolve(config.distDir)
+    this.baseDir = config.srcDir
+    this.webviewDirName = config.webviewDir
+    this.srcDir = path.resolve(config.srcDir, config.webviewDir)
+    this.distDir = path.resolve(config.distDir, config.webviewDir)
   }
 
   /**
@@ -77,13 +90,6 @@ class Processor {
 
         const result = await this.preProcess(absolutePath, type)
 
-        this.waitList[result.pluginName] ??= {}
-
-        this.waitList[result.pluginName][absolutePath] = {
-          targetPath: result.targetPath,
-          ext: result.ext,
-          type: result.type,
-        }
         const newURL = this.toBaseURL(result.targetPath)
 
         updatePath(newURL)
@@ -116,19 +122,69 @@ class Processor {
     const plugin = this.plugins.find(plugin => plugin.supports.includes(ext))
     if (!plugin) throw new Error(`此文件不受支持 "${sourceAbsolutePath}"`)
 
-    return await plugin.preProcess(this, sourceAbsolutePath, ext, type)
+    const result = await plugin.preProcess(this, sourceAbsolutePath, ext, type)
+
+    this.waitList[result.pluginName] ??= {}
+
+    this.waitList[result.pluginName][sourceAbsolutePath] = {
+      targetPath: result.targetPath,
+      ext: result.ext,
+      type: result.type,
+    }
+    return result
   }
 
   /**
    * 处理文件
    */
   async process(): Promise<void> {
-    Object.entries(this.waitList).map(([pluginName, files]) => {
+    const list = Object.entries(this.waitList)
+    for (let i = 0; i < list.length; i++) {
+      const [pluginName, files] = list[i]
+
       const plugin = this.plugins.find(plugin => plugin.name === pluginName)
       if (!plugin) throw new Error(`找不到插件 "${pluginName}"`)
 
-      plugin.process(this, files)
-    })
+      await plugin.process(this, files)
+    }
+  }
+
+  readonly esbuild: ESBuildPlugin = {
+    name: 'vscode-packer/html-process',
+    setup: build => {
+      const filter = /\.html$/
+      const namespace = 'vsc-html'
+
+      // 解析所有被导入的 HTML 文件
+      build.onResolve({ filter }, args => ({
+        path: path.resolve(args.resolveDir, args.path),
+        namespace,
+      }))
+
+      // 为 VSCode Extension 处理 HTML
+      build.onLoad({ filter, namespace }, async args => {
+        const content = await this.html(args.path)
+
+        return {
+          loader: 'ts',
+          contents: /* ts */ `
+import * as vscode from 'vscode'
+import * as path from 'node:path'
+export default (webview: vscode.Webview, context: vscode.ExtensionContext) => {
+  const webviewRoot = path.resolve(context.extensionPath, ${JSON.stringify(this.webviewDirName)})
+  const base = webview.asWebviewUri(vscode.Uri.file(webviewRoot))
+  let html = ${JSON.stringify(content)}
+
+  html = html
+    .replaceAll('{{base}}', base)
+    .replaceAll('{{cspSource}}', webview.cspSource)
+
+  return html
+}
+`,
+        }
+      })
+    },
   }
 }
 
@@ -153,6 +209,8 @@ namespace Processor {
     srcDir: string
     /** 产物文件夹 */
     distDir: string
+    /** Webview 文件夹 */
+    webviewDir: string
   }
 
   /**

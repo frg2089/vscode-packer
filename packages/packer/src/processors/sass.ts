@@ -1,13 +1,8 @@
 import * as fs from 'node:fs'
+import * as path from 'node:path'
+import { compileAsync } from 'sass-embedded'
 import Processor from '.'
 
-const getSass = async () => {
-  try {
-    return await import('sass-embedded')
-  } catch {
-    return await import('sass')
-  }
-}
 const sass = (): Processor.ProcessorPlugin => {
   const pluginName = 'sass'
   return {
@@ -25,14 +20,16 @@ const sass = (): Processor.ProcessorPlugin => {
         type,
       }
     },
-    async process(processorr, files) {
-      const sass = await getSass()
-      await Promise.all(
-        Object.entries(files).map(async ([sourceFile, { targetPath }]) => {
-          const result = await sass.compileAsync(sourceFile)
-          await fs.promises.writeFile(targetPath, result.css, 'utf-8')
-        }),
-      )
+    async process(processor, files) {
+      const list = Object.entries(files)
+      for (let i = 0; i < list.length; i++) {
+        const [sourceFile, { targetPath }] = list[i]
+        const result = await compileAsync(sourceFile)
+        await fs.promises.mkdir(path.dirname(targetPath), {
+          recursive: true,
+        })
+        await fs.promises.writeFile(targetPath, result.css, 'utf-8')
+      }
     },
   }
 }

@@ -1,26 +1,43 @@
 {
   "name": "vscode-packer",
-  "version": "1.0.0",
-  "type": "module",
-  "description": "",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "description": "VSCode 扩展打包工具",
   "author": "",
   "license": "ISC",
-  "main": "index.js",
+  "bin": {
+    "vscp": "dist/vscp.js"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "env.d.ts",
   "keywords": [],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup"
   },
   "dependencies": {
-    "esbuild": "^0.24.2"
-  },
-  "optionalDependencies": {
-    "sass": "^1.83.0",
-    "sass-embedded": "^1.83.0"
+    "commander": "^13.0.0",
+    "node-html-parser": "^7.0.1",
+    "sass-embedded": "^1.83.0",
+    "tsup": "^8.3.5"
   },
   "devDependencies": {
-    "@types/node": "^22.10.3",
-    "htmlparser2": "^10.0.0",
-    "node-html-parser": "^7.0.1",
-    "vite": "^6.0.6"
+    "@types/node": "^22.10.3"
+  },
+  "tsup": {
+    "entry": [
+      "src/**/*.ts"
+    ],
+    "platform": "node",
+    "format": [
+      "esm",
+      "cjs"
+    ],
+    "splitting": true,
+    "sourcemap": true,
+    "dts": true,
+    "bundle": false,
+    "tsconfig": "tsconfig.json",
+    "clean": true
   }
 }

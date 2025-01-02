@@ -1,9 +1,9 @@
-import * as esbuild from 'esbuild'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+import * as tsup from 'tsup'
 import Processor from '.'
 
-const typescript = (
-  options: esbuild.BuildOptions,
-): Processor.ProcessorPlugin => {
+const typescript = (options: tsup.Options): Processor.ProcessorPlugin => {
   const pluginName = 'typescript'
   return {
     name: pluginName,
@@ -21,15 +21,37 @@ const typescript = (
       }
     },
     async process(processor, files) {
-      await esbuild.build({
-        ...options,
-        entryPoints: Object.entries(files).map(
-          ([sourceFile, { targetPath }]) => ({
-            in: sourceFile,
-            out: targetPath.replace('.js', ''),
-          }),
-        ),
+      await fs.promises.mkdir(processor.distDir, { recursive: true })
+
+      const group: {
+        iife?: typeof files
+        esm?: typeof files
+      } = {}
+      Object.entries(files).forEach(([key, value]) => {
+        const format = value.type === 'module' ? 'esm' : 'iife'
+        key = path.relative(process.cwd(), key).replaceAll('\\', '/')
+        group[format] ??= {}
+        group[format][key] = value
       })
+
+      if (group.esm) {
+        const entry = Object.keys(group.esm)
+        await tsup.build({
+          outDir: processor.distDir,
+          entry,
+          format: 'esm',
+          ...options,
+        })
+      }
+      if (group.iife) {
+        const entry = Object.keys(group.iife)
+        await tsup.build({
+          outDir: processor.distDir,
+          entry,
+          format: 'iife',
+          ...options,
+        })
+      }
     },
   }
 }
