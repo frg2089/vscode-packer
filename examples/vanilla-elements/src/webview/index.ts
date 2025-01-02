@@ -1,11 +1,6 @@
-import {
-  allComponents,
-  provideVSCodeDesignSystem,
-} from '@vscode/webview-ui-toolkit'
+import '@vscode-elements/elements'
 
 const vscode = acquireVsCodeApi<string>()
-
-provideVSCodeDesignSystem().register(allComponents)
 
 const btnPostMessage: HTMLButtonElement | null =
   document.querySelector('#postMessage')

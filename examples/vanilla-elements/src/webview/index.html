@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <base href="{{base}}/" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src {{cspSource}} 'unsafe-inline'; script-src {{cspSource}} 'unsafe-eval';" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script type="module" src="./index.ts"></script>
+    <link rel="stylesheet" href="./style.scss" />
+  </head>
+  <body>
+    <main>
+      <h1>Hello Webview!</h1>
+      <vscode-button id="postMessage">Test VSCode Message</vscode-button>
+      <div>
+        <vscode-textfield id="stateInput" placeholder="Please enter a state">
+        </vscode-textfield>
+        <div>
+          State is:
+          <span id="state"></span>
+        </div>
+        <div>
+          <vscode-button id="setState"> setState </vscode-button>
+          <vscode-button id="getState"> getState </vscode-button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "name": "vanilla",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "publisher": "frg2089",
+  "license": "ISC",
+  "engines": {
+    "node": ">=20",
+    "vscode": "^1.93.0"
+  },
+  "main": "index.js",
+  "keywords": [],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@vscode-elements/elements": "^1.9.0"
+  },
+  "devDependencies": {
+    "@tomjs/tsconfig": "^1.7.1",
+    "@types/node": "^22.10.3",
+    "@types/vscode": "^1.96.0",
+    "@types/vscode-webview": "^1.57.5"
+  },
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "hello-world.showHelloWorld",
+        "title": "HelloWorld",
+        "category": "HelloWorld"
+      }
+    ]
+  }
+}
