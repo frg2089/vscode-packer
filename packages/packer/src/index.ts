@@ -1,2 +1,4 @@
-export * from './options'
-export * from './processors'
+import { EngineOptions } from './engine'
+
+export const defineConfig = (options: Partial<EngineOptions>): EngineOptions =>
+  EngineOptions.withDefault(options)

@@ -1,7 +1,6 @@
 import { program } from 'commander'
 import packageJson from '../package.json'
-import * as build from './build'
-import * as options from './options'
+import { Engine, EngineOptions } from './engine'
 
 program
   .name(packageJson.name)
@@ -11,9 +10,11 @@ program
 program
   .command('build')
   .description('打包 VSCode 扩展')
-  .action(() => {
-    const config = options.withDefaults({})
-    build.build(config)
+  .action(async () => {
+    const config = await EngineOptions.loadFromConfig()
+    const engine = new Engine(config)
+
+    await engine.build()
   })
 
 program.parse()

@@ -4,13 +4,32 @@
   "type": "commonjs",
   "description": "VSCode 扩展打包工具",
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bin": {
     "vscp": "dist/vscp.js"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "env.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./vanilla": {
+      "types": "./dist/plugins/vanilla.d.ts",
+      "import": "./dist/plugins/vanilla.mjs",
+      "require": "./dist/plugins/vanilla.js"
+    },
+    "./typescript": {
+      "types": "./dist/plugins/typescript.d.ts",
+      "import": "./dist/plugins/typescript.mjs",
+      "require": "./dist/plugins/typescript.js"
+    },
+    "./sass": {
+      "types": "./dist/plugins/sass.d.ts",
+      "import": "./dist/plugins/sass.mjs",
+      "require": "./dist/plugins/sass.js"
+    }
+  },
   "keywords": [],
   "scripts": {
     "build": "tsup"
@@ -18,25 +37,32 @@
   "dependencies": {
     "commander": "^13.0.0",
     "node-html-parser": "^7.0.1",
-    "sass-embedded": "^1.83.0",
     "tsup": "^8.3.5"
+  },
+  "optionalDependencies": {
+    "sass": "^1.83.1",
+    "sass-embedded": "^1.83.0",
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.3"
   },
   "tsup": {
     "entry": [
-      "src/**/*.ts"
+      "src/index.ts",
+      "src/vscp.ts",
+      "src/plugins/*.ts"
     ],
     "platform": "node",
     "format": [
-      "esm",
-      "cjs"
+      "cjs",
+      "esm"
     ],
-    "splitting": true,
+    "splitting": false,
     "sourcemap": true,
     "dts": true,
-    "bundle": false,
+    "minify": true,
+    "bundle": true,
     "tsconfig": "tsconfig.json",
     "clean": true
   }

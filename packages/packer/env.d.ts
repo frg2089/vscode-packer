@@ -5,7 +5,7 @@ declare module '*.html' {
     webview: vscode.Webview,
     context: vscode.ExtensionContext,
   ) => {
-    const webviewRoot = path.resolve(context.extensionPath, '<placeholder>')
+    const webviewRoot = path.resolve(__dirname)
     const base = webview.asWebviewUri(vscode.Uri.file(webviewRoot))
     let html: string
 
