@@ -10,9 +10,5 @@
     },
     "types": ["@types/vscode-webview"]
   },
-  "include": [
-    "src/webview/**/*.ts",
-    "src/webview/**/*.d.ts",
-    "obj/*.d.ts"
-  ]
+  "include": ["src/webview/**/*.ts", "src/webview/**/*.d.ts", "obj/*.d.ts"]
 }
