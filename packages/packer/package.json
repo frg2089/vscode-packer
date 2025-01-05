@@ -1,6 +1,6 @@
 {
   "name": "@frg2089/vscode-packer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "commonjs",
   "description": "VSCode 扩展打包工具",
   "repository": {
