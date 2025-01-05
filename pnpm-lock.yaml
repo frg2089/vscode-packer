@@ -93,6 +93,9 @@ importers:
       '@types/node':
         specifier: ^22.10.3
         version: 22.10.3
+      '@types/vscode':
+        specifier: ^1.96.0
+        version: 1.96.0
 
 packages:
 

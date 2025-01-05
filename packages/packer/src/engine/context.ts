@@ -10,4 +10,6 @@ export interface EngineContext extends Readonly<EngineOptions> {
   isBuild?: boolean
   /** 是开发环境 */
   isDev?: boolean
+  /** 开发服务器URL */
+  devUrlBase?: string
 }

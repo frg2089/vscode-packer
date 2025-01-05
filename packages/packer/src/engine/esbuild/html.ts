@@ -2,7 +2,11 @@ import * as htmlParser from 'node-html-parser'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import * as tsup from 'tsup'
+import * as vite from 'vite'
 import type { EngineContext } from '..'
+import buildScript from './build.ts.template'
+import devTemplate from './dev.html'
+import devScript from './dev.js.template'
 
 type ESBuildPlugin = Exclude<tsup.Options['esbuildPlugins'], undefined>[0]
 
@@ -13,6 +17,16 @@ export const esbuildHtmlProcess = (context: EngineContext): ESBuildPlugin => {
    * @returns
    */
   const htmlProcess = async (absolutePath: string): Promise<string> => {
+    if (context.isDev) {
+      const urlPath = path
+        .relative(context.cwd, absolutePath)
+        .replaceAll('\\', '/')
+
+      return devTemplate.replaceAll(
+        '{{serverUrl}}',
+        `${context.devUrlBase}${urlPath}`,
+      )
+    }
     /** HTML 文件所在的文件夹 */
     const baseDir = path.dirname(absolutePath)
 
@@ -39,7 +53,7 @@ export const esbuildHtmlProcess = (context: EngineContext): ESBuildPlugin => {
     return document.toString()
   }
   return {
-    name: 'vscode-packer/html-process',
+    name: 'vscode-packer/esbuild-plugin-html-process',
     setup: build => {
       const filter = /\.html$/
       const namespace = 'vsc-html'
@@ -56,23 +70,37 @@ export const esbuildHtmlProcess = (context: EngineContext): ESBuildPlugin => {
 
         return {
           loader: 'ts',
-          contents: /* ts */ `
-import * as vscode from 'vscode'
-import * as path from 'node:path'
-export default (webview: vscode.Webview, context: vscode.ExtensionContext) => {
-  const webviewRoot = path.resolve(__dirname)
-  const base = webview.asWebviewUri(vscode.Uri.file(webviewRoot))
-  let html = ${JSON.stringify(content)}
-
-  html = html
-    .replaceAll('{{base}}', base)
-    .replaceAll('{{cspSource}}', webview.cspSource)
-
-  return html
-}
-`,
+          contents: buildScript.replaceAll(
+            '{{content}}',
+            JSON.stringify(content),
+          ),
         }
       })
+    },
+  }
+}
+
+export const viteHtmlProcess = (): vite.PluginOption => {
+  return {
+    name: 'vscode-packer/vite-plugin-html-process',
+    transformIndexHtml: html => {
+      /** HTML 文档 */
+      const document = htmlParser.parse(html)
+      document
+        .querySelectorAll('base')
+        .concat(
+          document.querySelectorAll(
+            'meta[http-equiv="Content-Security-Policy"]',
+          ),
+        )
+        .forEach(base => base.remove())
+      document
+        .querySelector('head')
+        ?.insertAdjacentHTML(
+          'beforeend',
+          /* html */ `<script>${devScript}</script>`,
+        )
+      return document.toString()
     },
   }
 }

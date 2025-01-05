@@ -17,4 +17,14 @@ program
     await engine.build()
   })
 
+program
+  .command('dev')
+  .description('打包 VSCode 扩展')
+  .action(async () => {
+    const config = await EngineOptions.loadFromConfig()
+    const engine = new Engine(config)
+
+    await engine.dev()
+  })
+
 program.parse()

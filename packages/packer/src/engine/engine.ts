@@ -1,7 +1,8 @@
 import * as tsup from 'tsup'
+import * as vite from 'vite'
 import type { EngineContext, EngineOptions } from '.'
 import { packageJsonCleaner } from '.'
-import { esbuildHtmlProcess } from './esbuild/html'
+import { esbuildHtmlProcess, viteHtmlProcess } from './esbuild/html'
 
 /**
  * 编译引擎
@@ -55,5 +56,33 @@ export class Engine {
     // 此模式应存在以下行为
     // 监听 extension 代码修改
     // 激活开发服务器使 webview 相关代码可以热重载
+
+    const server = await vite.createServer({
+      configFile: false,
+      root: this.context.cwd,
+      plugins: [viteHtmlProcess()],
+    })
+    await server.listen()
+    this.context.devUrlBase = server.resolvedUrls?.local[0]
+
+    const extension: tsup.Options = {
+      entry: [this.context.entry],
+      outDir: this.context.dist,
+      minify: false,
+      external: ['vscode', 'node:*'],
+      platform: 'node',
+      format: 'cjs',
+      clean: false,
+      sourcemap: true,
+      watch: true,
+      esbuildPlugins: [esbuildHtmlProcess(this.context)],
+      onSuccess: async () => {
+        server.printUrls()
+      },
+    }
+    // 通过tsup编译扩展
+    await tsup.build(extension)
+
+    server.bindCLIShortcuts({ print: true })
   }
 }
