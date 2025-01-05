@@ -8,7 +8,7 @@
     "paths": {
       "@e/*": ["./*"]
     },
-    "types": ["node", "vscode-packer"]
+    "types": ["node", "vscode-packer/env"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "obj/*.d.ts"],
   "exclude": ["./src/webview"]

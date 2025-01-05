@@ -1,8 +1,12 @@
 {
-  "name": "vscode-packer",
+  "name": "@frg2089/vscode-packer",
   "version": "0.0.1",
   "type": "commonjs",
   "description": "VSCode 扩展打包工具",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frg2089/vscode-packer.git"
+  },
   "author": "",
   "license": "MIT",
   "bin": {
@@ -13,6 +17,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./env": {
+      "types": "./env.d.ts"
     },
     "./vanilla": {
       "types": "./dist/plugins/vanilla.d.ts",
@@ -32,7 +39,8 @@
   },
   "keywords": [],
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "prepublish": "pnpm build"
   },
   "dependencies": {
     "commander": "^13.0.0",

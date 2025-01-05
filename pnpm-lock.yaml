@@ -24,6 +24,9 @@ importers:
         specifier: ^1.9.0
         version: 1.9.0
     devDependencies:
+      '@frg2089/vscode-packer':
+        specifier: workspace:^
+        version: link:../../packages/packer
       '@tomjs/tsconfig':
         specifier: ^1.7.1
         version: 1.7.1
@@ -36,9 +39,6 @@ importers:
       '@types/vscode-webview':
         specifier: ^1.57.5
         version: 1.57.5
-      vscode-packer:
-        specifier: workspace:^
-        version: link:../../packages/packer
 
   examples/vanilla-legacy:
     dependencies:
@@ -46,6 +46,9 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(react@19.0.0)
     devDependencies:
+      '@frg2089/vscode-packer':
+        specifier: workspace:^
+        version: link:../../packages/packer
       '@tomjs/tsconfig':
         specifier: ^1.7.1
         version: 1.7.1
@@ -58,9 +61,6 @@ importers:
       '@types/vscode-webview':
         specifier: ^1.57.5
         version: 1.57.5
-      vscode-packer:
-        specifier: workspace:^
-        version: link:../../packages/packer
 
   packages/packer:
     dependencies:

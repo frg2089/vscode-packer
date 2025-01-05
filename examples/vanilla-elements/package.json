@@ -1,10 +1,15 @@
 {
-  "name": "vanilla",
+  "name": "vanilla-elements",
   "version": "1.0.0",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frg2089/vscode-packer.git"
+  },
   "author": "",
   "publisher": "frg2089",
-  "license": "ISC",
+  "license": "MIT",
+  "private": true,
   "engines": {
     "node": ">=20",
     "vscode": "^1.93.0"
@@ -22,7 +27,7 @@
     "@types/node": "^22.10.3",
     "@types/vscode": "^1.96.0",
     "@types/vscode-webview": "^1.57.5",
-    "vscode-packer": "workspace:^"
+    "@frg2089/vscode-packer": "workspace:^"
   },
   "activationEvents": [],
   "contributes": {
