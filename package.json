@@ -14,7 +14,8 @@
   "devDependencies": {
     "prettier": "^3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "prettier-plugin-pkg": "^0.18.1"
+    "prettier-plugin-pkg": "^0.18.1",
+    "typescript": "^5.7.2"
   },
   "prettier": {
     "printWidth": 80,
